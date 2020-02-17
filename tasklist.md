@@ -5,7 +5,7 @@
 - [x] organize html element to contain JavaScript that will become Mandelbrot Explorer
 - [x] organize CSS to position element properly on page
 - [x] connect HTML element to a skeleton JavaScript script
-- [ ] publish elements using Github pages
+- [x] publish elements using Github pages
 
 ## APPLICATION:
 - [ ] create large float data structure
