@@ -1,9 +1,9 @@
 # Task list
 
 ## INIT:
-- [ ] organize project directory hierarchy
+- [x] organize project directory hierarchy
 - [ ] organize html element to contain JavaScript that will become Mandelbrot Explorer
-- [ ] organize CSS to position element properly on page
+- [x] organize CSS to position element properly on page
 - [ ] connect HTML element to a skeleton JavaScript script
 - [ ] publish elements using Github pages
 
@@ -36,7 +36,7 @@
 - [ ] parse text from "zoom" textbar to coordinates if possible
 - [ ] redraw Mandelbrot set at those coordinates and that zoom, placing those coordinates at the center of the screen
 - [ ] create permissions button allowing client to offer more CPU cores to process images
-- [ ] create option for editing color scheme 
+- [ ] create option for editing color scheme
 
 ## DATABASE:
 
