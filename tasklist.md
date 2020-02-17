@@ -2,9 +2,9 @@
 
 ## INIT:
 - [x] organize project directory hierarchy
-- [ ] organize html element to contain JavaScript that will become Mandelbrot Explorer
+- [x] organize html element to contain JavaScript that will become Mandelbrot Explorer
 - [x] organize CSS to position element properly on page
-- [ ] connect HTML element to a skeleton JavaScript script
+- [x] connect HTML element to a skeleton JavaScript script
 - [ ] publish elements using Github pages
 
 ## APPLICATION:
