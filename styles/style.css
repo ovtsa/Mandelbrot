@@ -1,0 +1,38 @@
+html {
+  background-color: #262a36;
+}
+
+body {
+  max-width: 600px;
+  margin: 25px auto;
+  padding: 0;
+  border: 5px solid white;
+}
+
+h1 {
+  color: #ffffff;
+  text-align: center;
+  font-family: 'Prata', serif;
+}
+
+p {
+  color: #ffffff;
+  text-align: center;
+  font-family: 'Prata', serif;
+}
+
+img {
+  display: block;
+  margin: 20px auto;
+  border: 2px solid white;
+  width: 400px;
+  height: auto;
+}
+
+#page-introduction {
+  border-bottom: 5px double white;
+}
+
+#mandelbrot-application-container {
+  border-bottom: 5px double white;
+}
