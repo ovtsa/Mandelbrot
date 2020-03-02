@@ -73,10 +73,10 @@ function testComplexNums() {
 //testComplexNums();
 
 class Mandelbrot {
-  static isInSet(point) {
+  static iterationCounter(point) {
     // f(x_(n+1)) = (x_n)^2 + c
     // always start with seed x_0 = 0, c = point
-    let MAX_ITER = 255;
+    let MAX_ITER = 256;
     let xc = new ComplexNum(0, 0);
     let xn = new ComplexNum(0, 0);
     let i = 0;
@@ -87,7 +87,7 @@ class Mandelbrot {
       i++;
     }
 
-    return i === MAX_ITER;
+    return i;
   }
 }
 
@@ -124,21 +124,25 @@ class Graph {
     let y = 0;
     for (y = 0; y < this.height; y++) {
       for (x = 0; x < this.width; x++) {
-        if (Mandelbrot.isInSet(this.getCoordsAt(x, y)) === true) {
-          imgData.data[4 * (x + y * this.width)] = 255;
-          imgData.data[4 * (x + y * this.width) + 1] = 255;
-          imgData.data[4 * (x + y * this.width) + 2] = 255;
-          imgData.data[4 * (x + y * this.width) + 3] = 255;
+        let iterations = Mandelbrot.iterationCounter(this.getCoordsAt(x, y));
+        if (iterations === 256) {
+          Graph.color(imgData, x, y, this.width, 0, 0, 0, 255);
         } else {
-          imgData.data[4 * (x + y * this.width)] = 0;
-          imgData.data[4 * (x + y * this.width) + 1] = 0;
-          imgData.data[4 * (x + y * this.width) + 2] = 255;
-          imgData.data[4 * (x + y * this.width) + 3] = 255;
-        };
+          let scalar = 255 - iterations * 8;
+          Graph.color(imgData, x, y, this.width,
+            scalar, scalar, scalar, scalar);
+        }
       }
     }
 
     context.putImageData(imgData, 0, 0);
+  }
+
+  static color(imgData, x, y, width, r, g, b, o) {
+    imgData.data[4 * (x + y * width)]     = r;
+    imgData.data[4 * (x + y * width) + 1] = g;
+    imgData.data[4 * (x + y * width) + 2] = b;
+    imgData.data[4 * (x + y * width) + 3] = o;
   }
 }
 function testGetCoordsAt() {
@@ -167,7 +171,7 @@ function domloaded(){
       }
   }
 
-  graph = new Graph(400, 300, -2.5, 1, -1, 1);
+  graph = new Graph(400, 300, -2.5, 1.5, -1.5, 1.5);
   graph.draw(context);
 
   //loadImage('images/mandelbrot.jpg', 0, 0, 400, 300);
