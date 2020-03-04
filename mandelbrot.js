@@ -89,6 +89,10 @@ class Mandelbrot {
 
     return i;
   }
+
+  static smoothColor(z0, n) {
+
+  }
 }
 
 //console.log(Mandelbrot.isInSet(new ComplexNum(0, 0)));
@@ -118,7 +122,7 @@ class Graph {
                              this.yMax - (pixY * dy));
   }
 
-  draw(context) {
+  draw(context, iterationsMax) {
     let imgData = context.createImageData(this.width, this.height);
     let x = 0;
     let y = 0;
@@ -128,7 +132,7 @@ class Graph {
         if (iterations === 256) {
           Graph.color(imgData, x, y, this.width, 0, 0, 0, 255);
         } else {
-          let scalar = 255 - iterations * 8;
+          let scalar = 255 - iterations * 5;
           Graph.color(imgData, x, y, this.width,
             scalar, scalar, scalar, scalar);
         }
@@ -163,16 +167,19 @@ function domloaded(){
   var canvas = document.getElementById('mandelbrot-app');
   var context = canvas.getContext('2d');
 
-  function loadImage(imageSrc, x, y, width, height) {
-      var image = new Image();
-      image.src = imageSrc;
-      image.onload = function() {
-        context.drawImage(image, x, y, width, height);
-      }
-  }
-
   graph = new Graph(400, 300, -2.5, 1.5, -1.5, 1.5);
   graph.draw(context);
+
+  var button = document.getElementById('zoom-button');
+  button.onclick = function() {
+    // alert('hi');
+    let centerCoords = graph.getCoordsAt(graph.width/2, graph.height/2);
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin * 0.9, graph.xMax * 0.9,
+      graph.yMin * 0.9, graph.yMax * 0.9);
+
+    graph.draw(context);
+  }
 
   //loadImage('images/mandelbrot.jpg', 0, 0, 400, 300);
 }
