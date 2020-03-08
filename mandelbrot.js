@@ -73,15 +73,14 @@ function testComplexNums() {
 //testComplexNums();
 
 class Mandelbrot {
-  static iterationCounter(point) {
+  static iterationCounter(point, maxIter) {
     // f(x_(n+1)) = (x_n)^2 + c
     // always start with seed x_0 = 0, c = point
-    let MAX_ITER = 256;
     let xc = new ComplexNum(0, 0);
     let xn = new ComplexNum(0, 0);
     let i = 0;
 
-    while (i < MAX_ITER && ComplexNum.abs(xc) <= 2) {
+    while (i < maxIter && ComplexNum.abs(xc) <= 2) {
       xn = (ComplexNum.add(ComplexNum.multiply(xc, xc), point));
       xc = xn;
       i++;
@@ -122,19 +121,22 @@ class Graph {
                              this.yMax - (pixY * dy));
   }
 
-  draw(context, iterationsMax) {
+  draw(context, maxIter) {
     let imgData = context.createImageData(this.width, this.height);
     let x = 0;
     let y = 0;
     for (y = 0; y < this.height; y++) {
       for (x = 0; x < this.width; x++) {
-        let iterations = Mandelbrot.iterationCounter(this.getCoordsAt(x, y));
-        if (iterations === 256) {
+        let iterations = Mandelbrot.iterationCounter(this.getCoordsAt(x, y),
+          maxIter);
+        if (iterations === maxIter) {
           Graph.color(imgData, x, y, this.width, 0, 0, 0, 255);
         } else {
-          let scalar = 255 - iterations * 5;
+          let doot = 0;
+          //let scalar = 255 - iterations * 8;
           Graph.color(imgData, x, y, this.width,
-            scalar, scalar, scalar, scalar);
+            doot += (iterations * 8), doot - (iterations * 8),
+            doot + (iterations * 8), 255);
         }
       }
     }
@@ -161,24 +163,92 @@ function testGetCoordsAt() {
 }
 //testGetCoordsAt();
 
+const DEF_WIDTH  = 400;
+const DEF_HEIGHT = 300;
+const DEF_MINX   = -2.5;
+const DEF_MAXX   = 1.5;
+const DEF_MINY   = -1.5;
+const DEF_MAXY   = 1.5;
+const DEF_ITER   = 128;
 
 document.addEventListener('DOMContentLoaded',domloaded,false);
 function domloaded(){
   var canvas = document.getElementById('mandelbrot-app');
   var context = canvas.getContext('2d');
 
-  graph = new Graph(400, 300, -2.5, 1.5, -1.5, 1.5);
-  graph.draw(context);
+  graph = new Graph(DEF_WIDTH, DEF_HEIGHT,
+                    DEF_MINX, DEF_MAXX,
+                    DEF_MINY, DEF_MAXY);
+  graph.draw(context, DEF_ITER);
 
-  var button = document.getElementById('zoom-button');
-  button.onclick = function() {
+
+  /*
+  let i = 0;
+  window.setInterval(function() {
+    graph.draw(context, i);
+    if (i === 128) i = 0;
+    else i++;
+  }, 80);
+  */
+
+
+  var zoomButton     = document.getElementById('zoom-in-button');
+  var zoomOutButton  = document.getElementById('zoom-out-button');
+  var panUpButton    = document.getElementById('pan-up-button');
+  var panDownButton  = document.getElementById('pan-down-button');
+  var panLeftButton  = document.getElementById('pan-left-button');
+  var panRightButton = document.getElementById('pan-right-button');
+  zoomButton.onclick = function() {
     // alert('hi');
     let centerCoords = graph.getCoordsAt(graph.width/2, graph.height/2);
-    graph = new Graph(graph.width, graph.height,
-      graph.xMin * 0.9, graph.xMax * 0.9,
-      graph.yMin * 0.9, graph.yMax * 0.9);
 
-    graph.draw(context);
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin - ((graph.xMin - centerCoords.real) * 0.1),
+      graph.xMax - ((graph.xMax - centerCoords.real) * 0.1),
+      graph.yMin - ((graph.yMin - centerCoords.imaginary) * 0.1),
+      graph.yMax - ((graph.yMax - centerCoords.imaginary) * 0.1));
+    graph.draw(context, DEF_ITER);
+  }
+  zoomOutButton.onclick = function() {
+    // TODO: make zoom out proportional to zoom in
+    let centerCoords = graph.getCoordsAt(graph.width/2, graph.height/2);
+
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin + ((graph.xMin - centerCoords.real) * 0.1),
+      graph.xMax + ((graph.xMax - centerCoords.real) * 0.1),
+      graph.yMin + ((graph.yMin - centerCoords.imaginary) * 0.1),
+      graph.yMax + ((graph.yMax - centerCoords.imaginary) * 0.1));
+    graph.draw(context, DEF_ITER);
+  }
+  panUpButton.onclick = function() {
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin, graph.xMax,
+      graph.yMin + (0.05 * (graph.yMax - graph.yMin)),
+      graph.yMax + (0.05 * (graph.yMax - graph.yMin)));
+    graph.draw(context, DEF_ITER);
+  }
+  panDownButton.onclick = function() {
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin, graph.xMax,
+      graph.yMin - (0.05 * (graph.yMax - graph.yMin)),
+      graph.yMax - (0.05 * (graph.yMax - graph.yMin)));
+    graph.draw(context, DEF_ITER);
+  }
+  panLeftButton.onclick = function() {
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin - (0.05 * (graph.xMax - graph.xMin)),
+      graph.xMax - (0.05 * (graph.xMax - graph.xMin)),
+      graph.yMin,
+      graph.yMax);
+    graph.draw(context, DEF_ITER);
+  }
+  panRightButton.onclick = function() {
+    graph = new Graph(graph.width, graph.height,
+      graph.xMin + (0.05 * (graph.xMax - graph.xMin)),
+      graph.xMax + (0.05 * (graph.xMax - graph.xMin)),
+      graph.yMin,
+      graph.yMax);
+    graph.draw(context, DEF_ITER);
   }
 
   //loadImage('images/mandelbrot.jpg', 0, 0, 400, 300);

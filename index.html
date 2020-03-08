@@ -13,9 +13,16 @@
       <p>An interactive fractal explorer</p>
     </div>
     <div id="mandelbrot-application-container">
-      <!-- <img src="./images/mandelbrot.jpg" alt="bimmy neutron"> -->
+      <!-- <img src="./images/mandelbrot.djpg" alt="bimmy neutron"> -->
       <canvas id="mandelbrot-app", width=400px, height=300px></canvas>
-      <input type="button" value="Zoom in" id="zoom-button"/>
+      <div id="exploring-buttons">
+        <input type="button" value="Zoom in" id="zoom-in-button"/>
+        <input type="button" value="Zoom out" id="zoom-out-button"/>
+        <input type="button" value="Up" id="pan-up-button"/>
+        <input type="button" value="Down" id="pan-down-button"/>
+        <input type="button" value="Left" id="pan-left-button"/>
+        <input type="button" value="Right" id="pan-right-button"/>
+      </div>
     </div>
     <div id="page-footer">
       <p>Nathan Scott Jobe</p>

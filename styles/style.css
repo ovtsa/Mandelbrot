@@ -39,10 +39,16 @@ img {
 }
 */
 
+#exploring-buttons {
+  text-align:center;
+  margin: 20px auto;
+}
+
 #page-introduction {
   border-bottom: 5px double white;
 }
 
 #mandelbrot-application-container {
+  display: block;
   border-bottom: 5px double white;
 }
