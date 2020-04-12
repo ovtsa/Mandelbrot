@@ -86,7 +86,9 @@ class Mandelbrot {
       i++;
     }
 
-    return i;
+    if (i === maxIter) return i;
+    //return i;
+    return i + 1 - Math.log10(Math.log2(ComplexNum.abs(xc)));
   }
 
   static smoothColor(z0, n) {
@@ -129,14 +131,20 @@ class Graph {
       for (x = 0; x < this.width; x++) {
         let iterations = Mandelbrot.iterationCounter(this.getCoordsAt(x, y),
           maxIter);
+        //alert(iterations);
         if (iterations === maxIter) {
           Graph.color(imgData, x, y, this.width, 0, 0, 0, 255);
         } else {
           let doot = 0;
           //let scalar = 255 - iterations * 8;
           Graph.color(imgData, x, y, this.width,
+            iterations * 10, iterations * 10,
+            iterations * 10, 255);
+          /*
+          Graph.color(imgData, x, y, this.width,
             doot += (iterations * 8), doot - (iterations * 8),
             doot + (iterations * 8), 255);
+          */
         }
       }
     }
@@ -150,7 +158,38 @@ class Graph {
     imgData.data[4 * (x + y * width) + 2] = b;
     imgData.data[4 * (x + y * width) + 3] = o;
   }
+
+  /* accepts parameters
+  * h  Object = {h:x, s:y, v:z}
+  * OR
+  * h, s, v
+  */
+  static HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (arguments.length === 1) {
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: r * 255,
+        g: g * 255,
+        b: b * 255
+    };
+  }
 }
+
 function testGetCoordsAt() {
   let graph = new Graph(400, 300, -2, 2, -1.5, 1.5);
   let i = 0;
@@ -191,13 +230,20 @@ function domloaded(){
   }, 80);
   */
 
-
+  var resetButton    = document.getElementById('reset-button');
   var zoomButton     = document.getElementById('zoom-in-button');
   var zoomOutButton  = document.getElementById('zoom-out-button');
   var panUpButton    = document.getElementById('pan-up-button');
   var panDownButton  = document.getElementById('pan-down-button');
   var panLeftButton  = document.getElementById('pan-left-button');
   var panRightButton = document.getElementById('pan-right-button');
+
+  resetButton.onclick = function() {
+    graph = new Graph(DEF_WIDTH, DEF_HEIGHT,
+                      DEF_MINX, DEF_MAXX,
+                      DEF_MINY, DEF_MAXY);
+    graph.draw(context, DEF_ITER);
+  }
   zoomButton.onclick = function() {
     // alert('hi');
     let centerCoords = graph.getCoordsAt(graph.width/2, graph.height/2);
