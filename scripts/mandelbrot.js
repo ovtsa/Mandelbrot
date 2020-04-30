@@ -73,6 +73,8 @@ function testComplexNums() {
 //testComplexNums();
 
 class Mandelbrot {
+  // returns either maxIter if the point is within the set or
+  // a smooth value
   static iterationCounter(point, maxIter) {
     // f(x_(n+1)) = (x_n)^2 + c
     // always start with seed x_0 = 0, c = point
@@ -86,9 +88,15 @@ class Mandelbrot {
       i++;
     }
 
-    if (i === maxIter) return i;
-    //return i;
-    return i + 1 - Math.log10(Math.log2(ComplexNum.abs(xc)));
+    if (i === maxIter) return {smoothval: maxIter, max: xc};
+
+    // xc = escaped value (zn)
+    // i = itercount (n)
+    // point = z0
+    return {
+      smoothval: i + 1 - Math.log(Math.log(ComplexNum.abs(xc)))/Math.log(2),
+      max: xc
+    };
   }
 
   static smoothColor(z0, n) {
@@ -127,19 +135,47 @@ class Graph {
     let imgData = context.createImageData(this.width, this.height);
     let x = 0;
     let y = 0;
+    /*
+    let maxsmoothval = 0;
     for (y = 0; y < this.height; y++) {
       for (x = 0; x < this.width; x++) {
-        let iterations = Mandelbrot.iterationCounter(this.getCoordsAt(x, y),
+        let iterInfo = Mandelbrot.iterationCounter(this.getCoordsAt(x, y),
           maxIter);
+        if (iterInfo.smoothval > maxsmoothval) {
+          maxsmoothval = iterInfo.smoothval;
+        }
+      }
+    }
+    */
+    //alert(maxsmoothval);
+
+    for (y = 0; y < this.height; y++) {
+      for (x = 0; x < this.width; x++) {
+        let iterInfo = Mandelbrot.iterationCounter(this.getCoordsAt(x, y),
+          maxIter);
+        let iterations = iterInfo.smoothval;
         //alert(iterations);
         if (iterations === maxIter) {
           Graph.color(imgData, x, y, this.width, 0, 0, 0, 255);
         } else {
-          let doot = 0;
-          //let scalar = 255 - iterations * 8;
+          let color = Graph.HSVtoRGB(0.66, 1.0, 0.3);
+          if (iterations > 20) {
+            // 50 >= iterations > 20 (artificially binding max to 50)
+            //
+            color = Graph.HSVtoRGB(0.167, 0.0 + 8 * ((iterations - 20) / maxIter), 1.0);
+          } else if (iterations > 8) {
+            // 20 >= iterations > 8
+            let x = 1.0 / (12 / maxIter);
+            color = Graph.HSVtoRGB(0.66, 1.0 - x * ((iterations - 8) / maxIter), 1.0);
+          } else {
+            // iterations <= 8
+            // 0.2 + x(8 / maxIter) = 1.0
+            // x = 0.8 / (8 / maxIter)
+            let x = 0.8 / (8 / maxIter);
+            color = Graph.HSVtoRGB(0.66, 1.0, 0.2 + x * (iterations / maxIter));
+          }
           Graph.color(imgData, x, y, this.width,
-            iterations * 10, iterations * 10,
-            iterations * 10, 255);
+            color.r, color.g, color.b, 255);
           /*
           Graph.color(imgData, x, y, this.width,
             doot += (iterations * 8), doot - (iterations * 8),
